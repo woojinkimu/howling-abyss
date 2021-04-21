@@ -3,8 +3,9 @@ import { StatusBar, Text, View, StyleSheet, Image, Alert, ScrollView } from 'rea
 import axios from 'axios';
 import ListItem from './components/dashboard/ListItem';
 
-const Dashboard = ({ route }) => {
-  const { nick, level, icon, puuid, accountId, apiKey, myMatchData, wins, loses } = route.params;
+const Dashboard = ({ route, ...props }) => {
+  const { nick, level, icon, puuid, accountId, myMatchData, wins, loses } = route.params;
+  const { apiKey, runeData } = props;
   const [champIcon, setChampIcon] = useState({});
   const [itemIcon, setItemIcon] = useState({});
 
@@ -31,7 +32,12 @@ const Dashboard = ({ route }) => {
         let obj = {};
         let keys = Object.keys(data);
         Object.keys(data).map((item, idx) => {
-          obj[keys[idx]] = data[keys[idx]].image.full;
+          // obj[keys[idx]] = data[keys[idx]].image.full;
+          obj[keys[idx]] = {
+            img: data[keys[idx]].image.full,
+            name: data[keys[idx]].name,
+            tooltip: data[keys[idx]].plaintext,
+          };
           // console.log(item);
         });
         setItemIcon(obj);
@@ -76,9 +82,9 @@ const Dashboard = ({ route }) => {
       </View>
       <View style={styles.matchList}>
         {
-          myMatchData.map((item) => {
-            // console.log(item);
-            return <ListItem item={item} champIcon={champIcon} itemIcon={itemIcon} />
+          myMatchData.map((item, idx) => {
+            // console.log('itemicon   '+itemIcon);
+            return <ListItem item={item} champIcon={champIcon} itemIcon={itemIcon} runeData={runeData} key={'myMatchData' + idx} />
           })
         }
       </View>
